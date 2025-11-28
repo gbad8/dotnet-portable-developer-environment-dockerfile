@@ -28,4 +28,4 @@ The primary goal is to solve the "works on my machine" problem. By using this im
 This project is a **containerized implementation** of the configuration guide by **Ramboe**.
 
 * **Original Guide:** [The Actually Improved C# Configuration (2025)](https://git.ramboe.io/YouTube/neovim-c-the-actually-improved-configuration-2025-roslynnvim-rzslnvim/) by Ramboe.
-* **My Contribution:** I translated the manual steps from the guide into a transparent `Dockerfile`, automated the "Headless" installation of Mason/Treesitter, and optimized the environment for Docker usage.
+* **My Contribution:** I'm on the process to translate the manual steps from the guide into a transparent `Dockerfile`, automated the "Headless" installation of Mason/Treesitter, and optimized the environment for Docker usage.
