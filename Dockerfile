@@ -13,6 +13,7 @@ RUN pacman -Syu --noconfirm && \
         wget \
         npm \
         dotnet-sdk \
+        aspnet-runtime \
         gcc \
         neovim \
         && pacman -Scc --noconfirm
