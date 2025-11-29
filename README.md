@@ -23,6 +23,13 @@ The primary goal is to solve the "works on my machine" problem. By using this im
 * **Debugging:** `netcoredbg` fully configured with `nvim-dap-ui`.
 * **Testing:** `neotest-dotnet` integration.
 
+## :construction: Roadmap
+
+* **Remove "Black Box" elements:** I am currently working on refactoring the build process into a single, fully reproducible Dockerfile to ensure total transparency.
+* **Implementing Copilot:** That's another useful resource nowadays. Although not everyone likes it, it is a helpull resource for a lot of people.
+* **Add Aspnet runtime**
+* **Add tree:** It is necessary for using `git branch`
+
 ## 🔗 References & Credits
 
 This project is a **containerized implementation** of the configuration guide by **Ramboe**.
