@@ -38,3 +38,9 @@ RUN git clone https://github.com/NvChad/starter ~/.config/nvim
 
 # Enter Neovim to get all the instalation 
 RUN nvim --headless "+Lazy! sync" +qa
+
+# Install Entity Framework 
+RUN dotnet tool install --global dotnet-ef --version 9.0.11
+
+# Add dotnet tools to the bash profile
+RUN echo 'export PATH="$PATH:$HOME/.dotnet/tools"' >> ~/.bashrc
