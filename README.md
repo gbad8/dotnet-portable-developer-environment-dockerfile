@@ -29,6 +29,7 @@ The primary goal is to solve the "works on my machine" problem. By using this im
 * **Implementing Copilot:** That's another useful resource nowadays. Although not everyone likes it, it is a helpull resource for a lot of people.
 * **Add Aspnet runtime**
 * **Add tree:** It is necessary for using `git branch`
+* Add sqlcmd: It's done by downloading the binary e compiling.
 
 ## 🔗 References & Credits
 
