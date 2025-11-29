@@ -16,7 +16,7 @@ RUN pacman -Syu --noconfirm && \
         aspnet-runtime \
         gcc \
         neovim \
-        tree \ #not tested yet
+        tree \
         && pacman -Scc --noconfirm
 
 # Create a new user 'gbad8' with sudo privileges
