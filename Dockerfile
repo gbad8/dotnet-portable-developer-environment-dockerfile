@@ -17,6 +17,7 @@ RUN pacman -Syu --noconfirm && \
         gcc \
         neovim \
         tree \
+        base-devel \
         && pacman -Scc --noconfirm
 
 # Create a new user 'gbad8' with sudo privileges
@@ -39,8 +40,16 @@ RUN git clone https://github.com/NvChad/starter ~/.config/nvim
 # Enter Neovim to get all the instalation 
 RUN nvim --headless "+Lazy! sync" +qa
 
-# Install Entity Framework 
+# Install Entity Framework
 RUN dotnet tool install --global dotnet-ef --version 9.0.11
 
 # Add dotnet tools to the bash profile
 RUN echo 'export PATH="$PATH:$HOME/.dotnet/tools"' >> ~/.bashrc
+
+# Install mssql-tools to use sqlcmd
+WORKDIR /home/gbad8/Downloads/
+RUN curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot/mssql-tools.tar.gz
+RUN tar -xf mssql-tools.tar.gz
+WORKDIR /home/gbad8/Downloads/mssql-tools
+RUN makepkg -s --noconfirm --skippgpcheck
+RUN sudo pacman -U go-sqlcmd-1.8.2-1-x86_64.pkg.tar.zst --noconfirm
