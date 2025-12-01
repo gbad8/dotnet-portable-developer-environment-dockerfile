@@ -1,5 +1,6 @@
 FROM alpine:3.22
 
+LABEL maintainer="Guilherme d'Almeida <guilhermebarros181@hotmail.com"
 # installing base utilities
 RUN apk update
 RUN apk add --no-cache \
