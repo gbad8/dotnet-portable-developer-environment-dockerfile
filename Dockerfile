@@ -1,55 +1,37 @@
-# Use Arch Linux as the base image
-FROM archlinux:latest
+FROM alpine:3.22
 
-# Update system and install required packages
-RUN pacman -Syu --noconfirm && \
-    pacman -S --noconfirm \
-        sudo \
-        curl \
-        git \
-        fzf \
-        ripgrep \
-        unzip \
-        wget \
-        npm \
-        dotnet-sdk \
-        aspnet-runtime \
-        gcc \
-        neovim \
-        tree \
-        base-devel \
-        && pacman -Scc --noconfirm
+# installing base utilities
+RUN apk update
+RUN apk add --no-cache \
+            doas \
+            bash \
+            gcompat \
+            libstdc++ \
+            build-base \
+            curl \
+            git \
+            neovim \
+            dotnet9-sdk \
+            aspnetcore9-runtime
 
-# Create a new user 'gbad8' with sudo privileges
-RUN useradd -m -s /bin/bash gbad8 && \
-    echo "gbad8 ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# creating user account
+RUN adduser -D gbad8-dev
+RUN adduser gbad8-dev wheel
+RUN echo "gbad8-dev:Df1516170224*" | chpasswd
+RUN echo "permit persist :wheel" >> /etc/doas.d/20-wheel.conf
 
-# Switch to the new user
-USER gbad8
-WORKDIR /home/gbad8
+# setting up the user and working directory
+USER gbad8-dev
+WORKDIR /home/gbad8-dev/
+RUN mkdir Work Downloads
 
-# Create common folders
-RUN mkdir Downloads Documents
-
-# Default command
-CMD ["/bin/bash"]
-
-# Intall NvChad
+# installing NvChad
 RUN git clone https://github.com/NvChad/starter ~/.config/nvim 
-
-# Enter Neovim to get all the instalation 
 RUN nvim --headless "+Lazy! sync" +qa
 
-# Install Entity Framework
-RUN dotnet tool install --global dotnet-ef --version 9.0.11
+# installing the plugins
+COPY lua-plugins/* ~/.config/nvim/lua/plugins/
 
-# Add dotnet tools to the bash profile
-RUN echo 'export PATH="$PATH:$HOME/.dotnet/tools"' >> ~/.bashrc
-
-# Install mssql-tools to use sqlcmd
-WORKDIR /home/gbad8/Downloads/
-RUN curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot/mssql-tools.tar.gz
-RUN tar -xf mssql-tools.tar.gz
-WORKDIR /home/gbad8/Downloads/mssql-tools
-RUN makepkg -s --noconfirm --skippgpcheck
-RUN sudo pacman -U go-sqlcmd-1.8.2-1-x86_64.pkg.tar.zst --noconfirm
+# configuring Neovim for C#
+WORKDIR /home/gbad8-dev/.config/nvim/lua/plugins
+CMD ["/bin/bash"]

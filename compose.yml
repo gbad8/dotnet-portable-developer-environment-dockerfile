@@ -1,0 +1,30 @@
+services:
+  pde:
+    build: .
+    tty: true
+    volumes:
+      - ./:/home/gbad8-dev/Work
+    ports:
+      - 8000:8080
+    networks:
+      - backend
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Df1516170224*
+      - MSSQL_PID=Express
+    hostname: "db"
+    ports:
+      - 1433:1433
+    volumes:
+      - mssql-volume:/var/opt/mssql
+    networks:
+      - backend
+
+networks:
+  backend:
+
+volumes:
+  mssql-volume:
