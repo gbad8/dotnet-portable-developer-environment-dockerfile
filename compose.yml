@@ -3,7 +3,7 @@ services:
     build: .
     tty: true
     volumes:
-      - ./:/home/gbad8-dev/Work
+      - ~/Work:/home/gbad8-dev/Work
     ports:
       - 8000:8080
     networks:

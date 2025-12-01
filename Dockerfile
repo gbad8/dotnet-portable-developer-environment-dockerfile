@@ -31,7 +31,11 @@ RUN nvim --headless "+Lazy! sync" +qa
 
 # installing the plugins
 COPY lua-plugins/* /home/gbad8-dev/.config/nvim/lua/plugins/
+RUN nvim --headless \
+  -c 'MasonInstallAll' \
+  -c 'MasonInstall roslyn' \
+  -c 'qa'
 
 # configuring Neovim for C#
-WORKDIR /home/gbad8-dev/.config/nvim/lua/plugins
+WORKDIR /home/gbad8-dev/Work/
 CMD ["/bin/bash"]
