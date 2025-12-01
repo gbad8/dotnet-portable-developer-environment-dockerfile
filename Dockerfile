@@ -30,7 +30,7 @@ RUN git clone https://github.com/NvChad/starter ~/.config/nvim
 RUN nvim --headless "+Lazy! sync" +qa
 
 # installing the plugins
-COPY lua-plugins/* ~/.config/nvim/lua/plugins/
+COPY lua-plugins/* /home/gbad8-dev/.config/nvim/lua/plugins/
 
 # configuring Neovim for C#
 WORKDIR /home/gbad8-dev/.config/nvim/lua/plugins
