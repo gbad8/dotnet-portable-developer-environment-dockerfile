@@ -25,6 +25,9 @@ USER gbad8-dev
 WORKDIR /home/gbad8-dev/
 RUN mkdir Work Downloads
 
+# installing Entity Framework
+RUN dotnet tool install --global dotnet-ef --version 9.0.11
+
 # installing NvChad
 RUN git clone https://github.com/NvChad/starter ~/.config/nvim 
 RUN nvim --headless "+Lazy! sync" +qa
