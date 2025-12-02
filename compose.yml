@@ -1,7 +1,10 @@
 name: dev-environment
 services:
   pde:
-    build: ./arch
+    build: 
+      context: .
+      dockerfile: dockerfiles/Dockerfile
+    hostname: arch-pde
     tty: true
     volumes:
       - ~/Work:/home/gbad8/Work

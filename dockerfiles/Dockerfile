@@ -32,12 +32,29 @@ RUN mkdir Downloads Work
 # Install Entity Framework
 RUN dotnet tool install --global dotnet-ef --version 9.0.11
 
-
 # Intall NvChad
 RUN git clone https://github.com/NvChad/starter ~/.config/nvim 
 
 # Enter Neovim to get all the instalation 
+# RUN nvim --headless "+Lazy! sync" +qa
+
+# Copy lua plugins and config files to the right directory
+COPY --chown=1000:1000 lua-files/lua-plugins/* /home/gbad8/.config/nvim/lua/plugins/
+COPY --chown=1000:1000 lua-files/lua-configs/* /home/gbad8/.config/nvim/lua/configs/
+COPY --chown=1000:1000 lua-files/lua-neotest/init.lua /home/gbad8/.config/nvim/
+
+# Enter Neovim to get all the instalation 
 RUN nvim --headless "+Lazy! sync" +qa
+
+# Run Mason to install all the packages
+RUN nvim --headless \
+  -c 'MasonInstall roslyn \
+      css-lsp \
+      html-lsp \
+      rzls-unstable \
+      lua-language-server \
+      netcoredbg' \
+  -c 'qa'
 
 # Add dotnet tools to the bash profile
 RUN echo 'export PATH="$PATH:$HOME/.dotnet/tools"' >> ~/.bashrc
