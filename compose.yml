@@ -1,3 +1,4 @@
+name: dev-environment
 services:
   pde:
     build: .
