@@ -1,10 +1,10 @@
 name: dev-environment
 services:
   pde:
-    build: .
+    build: ./arch
     tty: true
     volumes:
-      - ~/Work:/home/gbad8-dev/Work
+      - ~/Work:/home/gbad8/Work
     ports:
       - 8000:8080
     networks:
