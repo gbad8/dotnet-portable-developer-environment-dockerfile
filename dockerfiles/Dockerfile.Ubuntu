@@ -1,0 +1,178 @@
+FROM archlinux:base
+
+# 1. Correção de Keyring e Atualização (Obrigatório no Arch)
+RUN pacman -Sy --noconfirm && \
+    pacman -S --noconfirm archlinux-keyring && \
+    pacman-key --init && \
+    pacman-key --populate archlinux && \
+    pacman -Syu --noconfirm
+
+# 2. Dependências
+RUN pacman -S --noconfirm --needed \
+    curl git wget unzip tar gzip \
+    base-devel \
+    sed \
+    ripgrep fd \
+    neovim \
+    nodejs npm \
+    python \
+    sudo
+
+# Configura Locale
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
+    locale-gen && \
+    echo "LANG=en_US.UTF-8" > /etc/locale.conf
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+
+# 3. Usuário e .NET 10
+RUN useradd -m -G wheel -s /bin/bash gbad8 && \
+    echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+USER gbad8
+WORKDIR /home/gbad8
+
+# Instala .NET 10
+RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh && \
+    chmod +x dotnet-install.sh && \
+    ./dotnet-install.sh --channel 10.0 --install-dir /home/gbad8/.dotnet && \
+    rm dotnet-install.sh
+
+ENV DOTNET_ROOT=/home/gbad8/.dotnet
+ENV PATH=$PATH:/home/gbad8/.dotnet:$DOTNET_ROOT/tools
+ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
+
+RUN mkdir -p .config/nvim Work Downloads .local/share/nvim
+
+# ---------------------------------------------------------------------------
+# 4. CONFIGURAÇÃO MODERNA DO NEOVIM (Mason Handlers)
+# ---------------------------------------------------------------------------
+RUN cat <<EOF > /home/gbad8/.config/nvim/init.lua
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- Configurações Básicas
+vim.opt.clipboard = "" 
+vim.opt.swapfile = false
+vim.opt.updatetime = 250
+vim.opt.termguicolors = true
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.g.mapleader = " "
+
+require("lazy").setup({
+  -- Tema
+  { "folke/tokyonight.nvim", lazy = false, priority = 1000, config = function() vim.cmd([[colorscheme tokyonight-night]]) end },
+  
+  -- UI
+  { "nvim-lualine/lualine.nvim", dependencies = { "nvim-tree/nvim-web-devicons" } },
+  { "nvim-neo-tree/neo-tree.nvim", branch = "v3.x", dependencies = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons", "MunifTanjim/nui.nvim" }, keys = { { "<leader>e", "<cmd>Neotree toggle<cr>" } } },
+  
+  -- Busca
+  { "nvim-telescope/telescope.nvim", tag = "0.1.5", dependencies = { "nvim-lua/plenary.nvim" }, keys = { { "<leader>ff", "<cmd>Telescope find_files<cr>" }, { "<leader>fg", "<cmd>Telescope live_grep<cr>" } } },
+  
+  -- Keymaps
+  { "folke/which-key.nvim", event = "VeryLazy", opts = {} },
+
+  -- CONFIGURAÇÃO LSP (MÉTODO NOVO - VIA HANDLERS)
+  {
+    "williamboman/mason.nvim",
+    build = ":MasonUpdate",
+    config = function() require("mason").setup() end,
+  },
+  {
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig", "hrsh7th/cmp-nvim-lsp" },
+    config = function()
+      local mason_lspconfig = require("mason-lspconfig")
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+      mason_lspconfig.setup({
+        ensure_installed = { "omnisharp", "html", "cssls" },
+        -- AQUI ESTÁ A CORREÇÃO: Usamos 'handlers' para configurar automaticamente
+        handlers = {
+            -- Handler Padrão (para HTML, CSS, etc)
+            function(server_name)
+                require("lspconfig")[server_name].setup({
+                    capabilities = capabilities
+                })
+            end,
+
+            -- Handler Específico para Omnisharp (C#)
+            ["omnisharp"] = function()
+                require("lspconfig").omnisharp.setup({
+                    capabilities = capabilities,
+                    cmd = { "dotnet", vim.fn.stdpath("data") .. "/mason/packages/omnisharp/libexec/OmniSharp.dll" },
+                    settings = {
+                        FormattingOptions = { EnableEditorConfigSupport = true, OrganizeImports = true },
+                        Sdk = { IncludePrereleases = true }, -- Necessário para .NET 10
+                    },
+                    enable_roslyn_analyzers = true,
+                    organize_imports_on_format = true,
+                    enable_import_completion = true,
+                })
+            end,
+        }
+      })
+    end
+  },
+
+  -- TREESITTER (RAZOR DESATIVADO PARA EVITAR TRAVAMENTO)
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = { "c_sharp", "html", "css", "lua", "vim", "bash" },
+        highlight = { 
+            enable = true,
+            disable = { "razor" },
+        },
+        indent = { 
+            enable = true, 
+            disable = { "razor" } 
+        },
+      })
+    end,
+  },
+
+  -- Autocomplete
+  {
+    "hrsh7th/nvim-cmp",
+    event = "InsertEnter",
+    dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer", "hrsh7th/cmp-path" },
+    config = function()
+      local cmp = require("cmp")
+      cmp.setup({
+        mapping = cmp.mapping.preset.insert({
+          ['<C-Space>'] = cmp.mapping.complete(),
+          ['<CR>'] = cmp.mapping.confirm({ select = true }),
+          ['<Tab>'] = cmp.mapping.select_next_item(),
+          ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+        }),
+        sources = cmp.config.sources({ { name = 'nvim_lsp' } }, { { name = 'buffer' } })
+      })
+    end,
+  },
+})
+
+vim.filetype.add({ extension = { razor = "razor", cshtml = "razor" } })
+EOF
+
+# 5. Bootstrap
+ENV TERM=xterm-256color
+
+# Baixa Plugins
+RUN nvim --headless "+Lazy! sync" +qa
+
+# Instalação LSPs (O Mason agora cuida disso via ensure_installed no config, 
+# mas forçamos uma passada para garantir que os binários estejam lá)
+RUN nvim --headless -c "lua require('lazy').load({ plugins = { 'mason.nvim', 'mason-lspconfig.nvim' } })" \
+    -c "MasonInstall omnisharp html-lsp css-lsp" \
+    -c "sleep 45" \
+    -c "qa"
+
+CMD ["/bin/bash"]

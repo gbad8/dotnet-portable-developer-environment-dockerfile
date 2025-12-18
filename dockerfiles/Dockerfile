@@ -30,10 +30,10 @@ WORKDIR /home/gbad8
 RUN mkdir Downloads Work
 
 # Install Entity Framework
-RUN dotnet tool install --global dotnet-ef --version 9.0.11
+#RUN dotnet tool install --global dotnet-ef # --version 9.0.11
 
 # Intall NvChad
-RUN git clone https://github.com/NvChad/starter ~/.config/nvim 
+# RUN git clone https://github.com/NvChad/starter ~/.config/nvim 
 
 # Enter Neovim to get all the instalation 
 # RUN nvim --headless "+Lazy! sync" +qa
