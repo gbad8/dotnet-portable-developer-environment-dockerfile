@@ -29,14 +29,11 @@ RUN rm -rf ~/.config/nvim/.git
 RUN nvim --headless "+Lazy! sync" +qa
 
 COPY --chown=1000:1000 ./config/nvim/init.lua /home/portabledev/.config/nvim/init.lua
-# COPY --chown=1000:1000 ./config/nvim/lua/plugins/mason.lua /home/portabledev/.config/nvim/lua/plugins
-# COPY --chown=1000:1000 ./config/nvim/lua/plugins/roslyn_nvim.lua /home/portabledev/.config/nvim/lua/plugins
 COPY --chown=1000:1000 ./config/nvim/lua/config/lspconfig.lua /home/portabledev/.config/nvim/lua/config
-# COPY --chown=1000:1000 ./config/nvim/lua/plugins/treesitter.lua /home/portabledev/.config/nvim/lua/plugins
-# COPY --chown=1000:1000 ./config/nvim/lua/plugins/debug.lua /home/portabledev/.config/nvim/lua/plugins
 COPY --chown=1000:1000 ./config/nvim/lua/config/nvim-dap.lua /home/portabledev/.config/nvim/lua/config
 COPY --chown=1000:1000 ./config/nvim/lua/config/nvim-dap-ui.lua /home/portabledev/.config/nvim/lua/config
 COPY --chown=1000:1000 ./config/nvim/lua/plugins/ /home/portabledev/.config/nvim/lua/plugins
+
 RUN nvim --headless "+MasonInstall roslyn html-lsp css-lsp lua-language-server netcoredbg" +qa
 
 WORKDIR /home/portabledev/Work
