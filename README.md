@@ -53,19 +53,17 @@ docker build -t dotnet-pde .
 Run the command below to launch the container. This will mount your current directory inside the container, allowing you to edit files on your host machine while using the container's tools.
 
 ```bash
-docker run -it --rm \
+docker run -it \
   --name csharp-env \
   -v $(pwd):/home/portabledev/Work \
-  -w /home/portabledev/Work \
-  -p 8000:8080 \
+  -P \
   dotnet-pde
 ```
 
 #### Understanding the flags:
 * `-it`: Ensures interactive mode (essential for running Neovim).
-* `--rm`: Automatically removes the container when you exit (keeps your docker clean).
 * `-v $(pwd):/home/portabledev/Work`: Maps your current local folder to the container's workspace. **Any file you save inside is persisted to your local disk.**
-* `-p 8000:8080`: Exposes port 8080 inside the container to port 8000 on your machine (useful for web apps).
+* `-p`: Exposes port 100 (designated in the Dockerfile) inside the container to a random port on your machine.
 
 ---
 
