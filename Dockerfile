@@ -36,4 +36,7 @@ RUN nvim --headless "+MasonInstall roslyn html-lsp css-lsp lua-language-server n
 
 WORKDIR /home/portabledev/Work
 
+EXPOSE 100/tcp
+VOLUME /home/portabledev/Work
+
 CMD ["/bin/bash", "-c", "nvim; exec /bin/bash"]
