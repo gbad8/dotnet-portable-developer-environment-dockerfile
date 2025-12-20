@@ -1,6 +1,5 @@
 FROM ubuntu:26.04
 
-RUN useradd gbad8
 RUN apt update -y && apt upgrade -y && apt install sudo -y
 
 RUN sudo apt install -y neovim \
@@ -14,8 +13,7 @@ RUN sudo apt install -y neovim \
   fd-find \
   lazygit
 
-RUN useradd -m -s /bin/bash -G sudo portabledev
-RUN echo "portabledev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN usermod -l portabledev -d /home/portabledev -m ubuntu
 
 USER portabledev
 WORKDIR /home/portabledev
