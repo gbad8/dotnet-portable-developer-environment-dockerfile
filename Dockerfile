@@ -14,6 +14,8 @@ RUN sudo apt install -y neovim \
   lazygit
 
 RUN usermod -l portabledev -d /home/portabledev -m ubuntu
+RUN echo "portabledev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/portabledev \
+    && chmod 0440 /etc/sudoers.d/portabledev
 
 USER portabledev
 WORKDIR /home/portabledev
