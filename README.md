@@ -9,9 +9,9 @@ This repository contains a Dockerfile that provides a complete, **"battery-inclu
 
 It is designed to be a zero-config, portable solution: just build the container, and you have a full IDE experience ready to go.
 
-<p align="center">
-  <img src="/demo.jpeg" alt="Texto Alternativo" width="100%">
-</p>
+<div style="text-align: center;">
+  <video src="https://github.com/user-attachments/assets/cb6147a4-34cb-4215-85a3-841752304da3" width="600" controls></video>
+</div>
 
 ## ✨ Key Features
 
