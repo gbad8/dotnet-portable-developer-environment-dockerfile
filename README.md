@@ -17,14 +17,15 @@ It is designed to be a zero-config, portable solution: just build the container,
 
 * **Base OS:** Ubuntu 26.04.
 * **Editor:** Neovim with the **LazyVim** preset (fast, beautiful, and Lua-based).
+* **Starship:** Pre-configured for a minimal, blazing-fast, and customizable shell prompt.
+* **Eza:** Included as a modern, colorful replacement for `ls` with icons and Git integration.
 * **Dev Tools:** .NET SDK 10.0, ASP.NET runtime, and Entity Framework.
 * **Intellisense (LSP):**
     * **C#:** `roslyn.nvim` (utilizing the official Microsoft Roslyn Language Server).
-    * **Blazor/Razor:** `rzls.nvim` (full support for `.razor` files).
+    * **Razor:** `rzls.nvim` (full support for `.razor` files).
 * **Debugging (DAP):** Pre-configured `netcoredbg` with a user interface (`nvim-dap-ui`) for a full debugging experience.
 * **Testing:** Integrated unit testing via `neotest-dotnet`.
 * **Zero Config:** Everything is "baked" into the image via the Dockerfile.
-
 ---
 
 ## 🚀 Getting Started
@@ -66,6 +67,21 @@ docker run -it \
 * `-p`: Exposes port 100 (designated in the Dockerfile) inside the container to a random port on your machine.
 
 ---
+## 💻 Running on Windows (via WSL)
+
+This project is optimized for Linux environments. If you are using Windows, you must run the commands via **WSL 2 (Windows Subsystem for Linux)**.
+
+1.  Open your distribution's terminal (e.g., Ubuntu) from the Start Menu or by typing `wsl` in PowerShell.
+2.  Navigate to your project's directory:
+    ```bash
+    cd /mnt/c/Users/YourUser/Path/To/Project
+    ```
+3.  Follow the build and execution instructions listed below.
+
+### ⚠️ Memory and Performance Requirements
+
+* **Note for 4GB RAM machines:** You may experience input lag or system slowdowns due to intensive SWAP usage.
+* **Recommendation:** To prevent freezing, close other heavy applications (such as browsers or GUI-based IDEs) before building the application or starting the Docker environment.
 
 ## ⌨️ Usage Guide
 
